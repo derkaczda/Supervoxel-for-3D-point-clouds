@@ -176,9 +176,9 @@ bool WriteXYZPoints(const char* filename,
         const Point3D<T>& p = points[i];
         out << p.x << " " << p.y << " " << p.z << " ";
         const RGB32Color& c = colors[i];
-        out << static_cast<int>(c.red()) << " " <<
-               static_cast<int>(c.green()) << " " <<
-               static_cast<int>(c.blue()) << "\n";
+        out << static_cast<float>(c.red() / 255.0f) << " " <<
+               static_cast<float>(c.green() / 255.0f) << " " <<
+               static_cast<float>(c.blue() / 255.0f) << "\n";
     }
 
     out.close();
