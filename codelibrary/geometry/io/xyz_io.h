@@ -77,14 +77,13 @@ bool ReadXYZPoints(const char* filename, Array<Point3D<T> >* points,
     while (std::getline(in, line)) {
         std::istringstream is(line);
 
-        if (!(is >> x) || !(is >> y) || !(is >> z) ||
-            !(is >> r) || !(is >> g) || !(is >> b)) {
+        if (!(is >> x) || !(is >> y) || !(is >> z)) {
             LOG(INFO) << "Invalid XYZ format at line: " << n_lines++;
             in.close();
             return false;
         }
         points->emplace_back(x, y, z);
-        colors->emplace_back(r, g, b);
+        colors->emplace_back((int)(r*255), (int)(g*255), (int)(b*255));
     }
 
     in.close();
