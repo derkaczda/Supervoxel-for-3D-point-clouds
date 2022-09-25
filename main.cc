@@ -8,6 +8,9 @@
 #include "vccs_knn_supervoxel.h"
 #include "vccs_supervoxel.h"
 
+#include <iostream>
+#include <fstream>
+
 /// Point with Normal.
 struct PointWithNormal : cl::RPoint3D {
     PointWithNormal() {}
@@ -59,6 +62,17 @@ void WritePoints(const char* filename,
     }
 
 //    system(filename);
+}
+
+void WriteToTxt(const char* filename, const cl::Array<int>& data)
+{
+    std::ofstream my_file(filename);
+    if(my_file.is_open()) {
+        for(int i; i < data.size(); i++) {
+            my_file << data[i] << "\n";
+        }
+        my_file.close();
+    }
 }
 
 int main(int argc, char** argv) {
@@ -125,6 +139,8 @@ int main(int argc, char** argv) {
     int n_supervoxels = supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
     WritePoints("out.xyz", n_supervoxels, points, labels);
+    WriteToTxt("out_labels.txt", labels);
+    WriteToTxt("out_supervoxel.txt", supervoxels);
 
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -145,6 +161,8 @@ int main(int argc, char** argv) {
     n_supervoxels = vccs_supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
     WritePoints("out_vccs.xyz", n_supervoxels, points, vccs_labels);
+    WriteToTxt("out_vccs_labels.txt", vccs_labels);
+    // WriteToTxt("out_supervoxel.txt", supervoxels);
 
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -162,6 +180,7 @@ int main(int argc, char** argv) {
     n_supervoxels = vccs_knn_supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
     WritePoints("out_vccs_knn.xyz", n_supervoxels, points, vccs_knn_labels);
+    WriteToTxt("out_vccs_knn_labels.txt", vccs_knn_labels);
 
     return 0;
 }
