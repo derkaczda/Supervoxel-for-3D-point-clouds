@@ -10,6 +10,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 /// Point with Normal.
 struct PointWithNormal : cl::RPoint3D {
@@ -80,6 +83,11 @@ int main(int argc, char** argv) {
 
     const std::string filename = argv[1];
 
+    std::vector<std::string> strs;
+    boost::split(strs, filename, boost::is_any_of("/"));
+    boost::split(strs, strs[strs.size()-1], boost::is_any_of("."));
+    const std::string sample_name = strs[0];
+
     cl::Array<cl::RPoint3D> points;
     cl::Array<cl::RGB32Color> colors;
 
@@ -138,9 +146,12 @@ int main(int argc, char** argv) {
 
     int n_supervoxels = supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
-    WritePoints("out.xyz", n_supervoxels, points, labels);
-    WriteToTxt("out_labels.txt", labels);
-    WriteToTxt("out_supervoxel.txt", supervoxels);
+    std::string out_name = sample_name + "_out.xyz";
+    std::string out_label_name = sample_name + "_out_labels.txt";
+    std::string out_supervoxel_name = sample_name + "_out_supervoxel.txt";
+    WritePoints(out_name.c_str(), n_supervoxels, points, labels);
+    WriteToTxt(out_label_name.c_str(), labels);
+    WriteToTxt(out_supervoxel_name.c_str(), supervoxels);
 
     //-------------------------------------------------------------------------
     //-------------------------------------------------------------------------
@@ -160,8 +171,10 @@ int main(int argc, char** argv) {
 
     n_supervoxels = vccs_supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
-    WritePoints("out_vccs.xyz", n_supervoxels, points, vccs_labels);
-    WriteToTxt("out_vccs_labels.txt", vccs_labels);
+    out_name = sample_name + "_out_vccs.xyz";
+    out_label_name = sample_name + "_out_vccs_labels.txt";
+    WritePoints(out_name.c_str(), n_supervoxels, points, vccs_labels);
+    WriteToTxt(out_label_name.c_str(), vccs_labels);
     // WriteToTxt("out_supervoxel.txt", supervoxels);
 
     //-------------------------------------------------------------------------
@@ -179,8 +192,10 @@ int main(int argc, char** argv) {
 
     n_supervoxels = vccs_knn_supervoxels.size();
     LOG(INFO) << n_supervoxels << " supervoxels computed.";
-    WritePoints("out_vccs_knn.xyz", n_supervoxels, points, vccs_knn_labels);
-    WriteToTxt("out_vccs_knn_labels.txt", vccs_knn_labels);
+    out_name = sample_name + "_out_vccs_knn.xyz";
+    out_label_name = sample_name + "_out_vccs_knn_labels.txt";
+    WritePoints(out_name.c_str(), n_supervoxels, points, vccs_knn_labels);
+    WriteToTxt(out_label_name.c_str(), vccs_knn_labels);
 
     return 0;
 }
