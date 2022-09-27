@@ -4,6 +4,8 @@ import glob
 import os.path as osp
 import shutil
 
+os.umask(0000)
+
 from multiprocessing import Pool, cpu_count
 from functools import partial
 

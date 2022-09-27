@@ -6,6 +6,8 @@ import glob
 import numpy as np
 import shutil
 
+os.umask(0000)
+
 def main(args):
     os.makedirs(args.dest, exist_ok=True)
     pointcloud_files = glob.glob(osp.join(args.dir, "samples", "LIDAR_TOP", "*.bin"))
