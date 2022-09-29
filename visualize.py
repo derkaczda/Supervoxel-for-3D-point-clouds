@@ -8,8 +8,8 @@ def get_supervoxel_mapping(path):
 
 
 def main(args):
-    pcd = o3d.io.read_point_cloud(osp.join(args.dir, "out.xyz"), format="xyzrgb")
-    mapping = get_supervoxel_mapping(osp.join(args.dir, "out_labels.txt"))
+    pcd = o3d.io.read_point_cloud(osp.join(args.xyz_dir, f"{args.filename}..xyz"), format="xyzrgb")
+    mapping = get_supervoxel_mapping(osp.join(args.supervox_dir, f"{args.filename}_out_labels.txt"))
     supervoxel_ids = np.unique(mapping)
 
     colors = np.empty((mapping.shape[0], 3))
@@ -17,10 +17,13 @@ def main(args):
         mask = mapping == supervox_id
         colors[mask] = np.random.random(3)
     pcd.colors = o3d.utility.Vector3dVector(colors)
-    o3d.io.write_point_cloud(osp.join(args.dir, "out.ply"), pcd)
+    o3d.io.write_point_cloud(osp.join(args.dest, f"{args.filename}.ply"), pcd)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dir')
+    parser.add_argument('--xyz_dir')
+    parser.add_argument('--supervox_dir')
+    parser.add_argument('--dest')
+    parser.add_argument('--filename', help='without extension')
     args = parser.parse_args()
     main(args)
