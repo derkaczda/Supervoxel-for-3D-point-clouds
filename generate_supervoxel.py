@@ -3,6 +3,7 @@ import os
 import glob
 import os.path as osp
 import shutil
+import sys
 
 os.umask(0000)
 
@@ -10,7 +11,12 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 
 def generate_supervoxel(xyz_file, dest):
-    filename = xyz_file.split('/')[-1][:-len("..xyz")]
+    filename = xyz_file.split('/')[-1].split('.')[0]
+    print(f"Processing file {filename}")
+    if osp.exists(osp.join(dest, f"{filename}_out.xyz")):
+        print("File exists, skipping ...")
+        return
+    sys.stdout.flush()
     os.system(f"./build/supervoxel {osp.abspath(xyz_file)}")
     shutil.move(f"{filename}_out.xyz", osp.join(dest, f"{filename}_out.xyz"))
     shutil.move(f"{filename}_out_vccs.xyz", osp.join(dest, f"{filename}_out_vccs.xyz"))
@@ -34,7 +40,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir")
     parser.add_argument("--dest")
-    parser.add_argument("--n_proc", default=cpu_count())
+    parser.add_argument("--n_proc", default=cpu_count(), type=int)
     args = parser.parse_args()
 
     os.makedirs(args.dest, exist_ok=True)
