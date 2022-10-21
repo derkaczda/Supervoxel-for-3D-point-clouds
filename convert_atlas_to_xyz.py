@@ -36,20 +36,23 @@ def merge_convert(args, dest_path):
 
 def convert(args, dest_path):
     for cam_id in range(1, NUM_CAMS + 1):
+        camera_dest_path = osp.join(dest_path, f"cn0{cam_id}")
+        os.makedirs(camera_dest_path, exist_ok=True)
         files = glob.glob(osp.join(args.dir, args.phase, f"cn0{cam_id}", "*.ply"))
         for file in files:
             file_id = file.split('/')[-1][:-len("_pointcloud.ply")]
             pc = o3d.io.read_point_cloud(file)
-            o3d.io.write_point_cloud(osp.join(dest_path, f"{file_id}_cn0{cam_id}.xyzrgb"), pc)
+            o3d.io.write_point_cloud(osp.join(camera_dest_path, f"{file_id}.xyzrgb"), pc)
             shutil.move(
-                osp.join(dest_path, f"{file_id}_cn0{cam_id}.xyzrgb"),
-                osp.join(dest_path, f"{file_id}_cn0{cam_id}.xyz")
+                osp.join(camera_dest_path, f"{file_id}.xyzrgb"),
+                osp.join(camera_dest_path, f"{file_id}.xyz")
             )
 
 
 def main(args):
-    dest_path = osp.join(args.dir, args.phase, 'xyz_data')
+    dest_path = args.dest_path #osp.join(args.dir, args.phase, 'xyz_data')
     os.makedirs(dest_path, exist_ok=True)
+    print(args.dest_path)
     if args.merge:
         merge_convert(args, dest_path)
     else:
@@ -61,5 +64,6 @@ if __name__ == "__main__":
     parser.add_argument('--dir')
     parser.add_argument('--phase')
     parser.add_argument('--merge', action='store_true', default=False)
+    parser.add_argument('--dest_path')
     args = parser.parse_args()
     main(args)
