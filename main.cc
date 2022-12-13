@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
         oriented_points[i].normal = normals[i];
     }
 
-    const double resolution = 1.0;
+    const double resolution = std::atof(argv[2]);
     VCCSMetric metric(resolution);
     cl::Array<int> labels, supervoxels;
     cl::geometry::point_cloud::SupervoxelSegmentation(oriented_points,
